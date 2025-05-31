@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Mindful Breaks",
+  "version": "1.0",
+  "description": "Take short mindful breaks to refresh your mind and body.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/placeholder.png",
+      "48": "assets/placeholder.png",
+      "128": "assets/placeholder.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "notifications",
+    "storage",
+    "alarms"
+  ],
+  "icons": {
+    "16": "assets/placeholder.png",
+    "48": "assets/placeholder.png",
+    "128": "assets/placeholder.png"
+  }
+}
