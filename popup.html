@@ -12,7 +12,10 @@
     <h1>Mindful Breaks</h1>
     <label for="work-minutes">Work session length (minutes):</label>
     <input type="number" id="work-minutes" min="1" max="120" value="25" />
-    <button id="start-btn">Start Focus Timer</button>
+    <div class="button-group">
+      <button id="start-btn">Start Focus Timer</button>
+      <button id="reset-btn" class="hidden reset-button">Reset</button>
+    </div>
     <button id="pause-btn" class="hidden">Pause</button>
     <p id="countdown"></p>
   </div>

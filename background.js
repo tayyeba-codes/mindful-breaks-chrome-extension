@@ -114,6 +114,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success: true });
     }
   }
+  // Handle timer reset request
+  else if (message.action === 'resetTimer') {
+    // Clear any active alarms
+    chrome.alarms.clear("workSession");
+    
+    // Clear intervals
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    
+    // Reset timer state in storage
+    chrome.storage.local.set({
+      timerState: {
+        active: false,
+        paused: false
+      }
+    });
+    
+    console.log('Timer reset');
+    
+    // Send response if callback exists
+    if (sendResponse) {
+      sendResponse({ success: true });
+    }
+  }
   // Handle request for current timer state
   else if (message.action === 'getTimerState') {
     chrome.storage.local.get(['timerState'], (result) => {

@@ -6,6 +6,7 @@
 // DOM element references
 const startBtn = document.getElementById("start-btn");
 const pauseBtn = document.getElementById("pause-btn");
+const resetBtn = document.getElementById("reset-btn");
 const minutesInput = document.getElementById("work-minutes");
 const countdownDisplay = document.getElementById("countdown");
 let timer;
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Update UI to match current state
       startBtn.classList.add("hidden");
+      resetBtn.classList.remove("hidden");
       pauseBtn.classList.remove("hidden");
       pauseBtn.textContent = isPaused ? "Resume" : "Pause";
       
@@ -44,6 +46,7 @@ startBtn.addEventListener("click", () => {
 
   // Show pause button, hide start button
   startBtn.classList.add("hidden");
+  resetBtn.classList.remove("hidden");
   pauseBtn.classList.remove("hidden");
   pauseBtn.textContent = "Pause";
   isPaused = false;
@@ -86,6 +89,18 @@ pauseBtn.addEventListener("click", () => {
   }
 });
 
+// Reset button event listener
+resetBtn.addEventListener("click", () => {
+  // Clear interval and reset UI
+  clearInterval(timer);
+  resetTimerUI();
+  
+  // Notify background script to reset timer
+  chrome.runtime.sendMessage({
+    action: 'resetTimer'
+  });
+});
+
 // Function to start the countdown
 function startCountdown() {
   // Clear any existing interval
@@ -125,6 +140,7 @@ function startCountdown() {
 function resetTimerUI() {
   startBtn.classList.remove("hidden");
   pauseBtn.classList.add("hidden");
+  resetBtn.classList.add("hidden");
   timeLeft = 0;
   isPaused = false;
   countdownDisplay.textContent = "";
