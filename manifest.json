@@ -6,9 +6,9 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "assets/placeholder.png",
-      "48": "assets/placeholder.png",
-      "128": "assets/placeholder.png"
+      "16": "assets/logo.png",
+      "48": "assets/logo.png",
+      "128": "assets/logo.png"
     }
   },
   "background": {
@@ -20,8 +20,8 @@
     "alarms"
   ],
   "icons": {
-    "16": "assets/placeholder.png",
-    "48": "assets/placeholder.png",
-    "128": "assets/placeholder.png"
+    "16": "assets/logo.png",
+    "48": "assets/logo.png",
+    "128": "assets/logo.png"
   }
 }
