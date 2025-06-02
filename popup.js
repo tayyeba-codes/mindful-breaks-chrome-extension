@@ -12,6 +12,30 @@ let timer;
 let timeLeft = 0;
 let isPaused = false;
 
+// Check for existing timer on popup load
+document.addEventListener('DOMContentLoaded', () => {
+  chrome.runtime.sendMessage({ action: 'getTimerState' }, (timerState) => {
+    if (timerState && timerState.active) {
+      // Restore timer state
+      timeLeft = timerState.remainingTime;
+      isPaused = timerState.paused;
+      
+      // Update UI to match current state
+      startBtn.classList.add("hidden");
+      pauseBtn.classList.remove("hidden");
+      pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+      
+      // Display current time
+      countdownDisplay.textContent = formatTime(timeLeft);
+      
+      // Start the countdown if not paused
+      if (!isPaused) {
+        startCountdown();
+      }
+    }
+  });
+});
+
 // Start button event listener
 startBtn.addEventListener("click", () => {
   // Get and validate work duration
@@ -38,20 +62,8 @@ startBtn.addEventListener("click", () => {
   // Display initial time
   countdownDisplay.textContent = formatTime(timeLeft);
 
-  // Start countdown display
-  clearInterval(timer);
-  timer = setInterval(() => {
-    if (!isPaused) {
-      timeLeft--;
-      countdownDisplay.textContent = formatTime(timeLeft);
-
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        resetTimerUI();
-        // Timer complete notification will be handled by background.js
-      }
-    }
-  }, 1000);
+  // Start countdown
+  startCountdown();
 });
 
 // Pause button event listener
@@ -64,7 +76,50 @@ pauseBtn.addEventListener("click", () => {
     action: isPaused ? 'pauseTimer' : 'resumeTimer',
     timeLeft: timeLeft
   });
+  
+  // If resumed, restart the countdown
+  if (!isPaused) {
+    startCountdown();
+  } else {
+    // If paused, clear the interval
+    clearInterval(timer);
+  }
 });
+
+// Function to start the countdown
+function startCountdown() {
+  // Clear any existing interval
+  clearInterval(timer);
+  
+  // Start the timer
+  timer = setInterval(() => {
+    // Synchronize with background timer
+    chrome.runtime.sendMessage({ action: 'getTimerState' }, (timerState) => {
+      if (timerState && timerState.active) {
+        // Update local time with background time
+        timeLeft = timerState.remainingTime;
+        isPaused = timerState.paused;
+        pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+        
+        // Update display
+        countdownDisplay.textContent = formatTime(timeLeft);
+        
+        // If timer has completed or is paused
+        if (timeLeft <= 0 || isPaused) {
+          clearInterval(timer);
+          
+          if (timeLeft <= 0) {
+            resetTimerUI();
+          }
+        }
+      } else {
+        // If timer is no longer active in background
+        clearInterval(timer);
+        resetTimerUI();
+      }
+    });
+  }, 1000);
+}
 
 // Function to reset timer UI
 function resetTimerUI() {
